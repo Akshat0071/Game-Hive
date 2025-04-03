@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { Discord, Github, Mail } from "lucide-react";
+import { Github, Mail, MessageSquare } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export function LoginForm() {
@@ -23,7 +23,7 @@ export function LoginForm() {
             Github
           </Button>
           <Button variant="outline" className="w-full">
-            <Discord className="h-5 w-5 mr-2" />
+            <MessageSquare className="h-5 w-5 mr-2" />
             Discord
           </Button>
           <Button variant="outline" className="w-full">

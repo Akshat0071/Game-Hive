@@ -5,7 +5,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { Discord, Github } from "lucide-react";
+import { Github, MessageSquare } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export function RegisterForm() {
@@ -24,7 +24,7 @@ export function RegisterForm() {
             Github
           </Button>
           <Button variant="outline" className="w-full">
-            <Discord className="h-5 w-5 mr-2" />
+            <MessageSquare className="h-5 w-5 mr-2" />
             Discord
           </Button>
           <Button variant="outline" className="w-full">

@@ -1,6 +1,6 @@
 
 import { Link } from "react-router-dom";
-import { Discord, Facebook, Github, Instagram, Twitter, Youtube } from "lucide-react";
+import { Facebook, Github, Instagram, MessageSquare, Twitter, Youtube } from "lucide-react";
 
 export function Footer() {
   return (
@@ -20,7 +20,7 @@ export function Footer() {
                 <span className="sr-only">Twitter</span>
               </a>
               <a href="#" className="text-foreground/70 hover:text-gaming-accent transition-colors">
-                <Discord className="h-5 w-5" />
+                <MessageSquare className="h-5 w-5" />
                 <span className="sr-only">Discord</span>
               </a>
               <a href="#" className="text-foreground/70 hover:text-gaming-accent transition-colors">
