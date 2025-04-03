@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,6 +62,15 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				// Gaming theme colors
+				gaming: {
+					primary: '#6939FF',
+					secondary: '#2176FF',
+					accent: '#FF2E63',
+					highlight: '#00F5FF',
+					dark: '#0F172A',
+					light: '#E2E8F0'
 				}
 			},
 			borderRadius: {
@@ -70,25 +80,41 @@ export default {
 			},
 			keyframes: {
 				'accordion-down': {
-					from: {
-						height: '0'
-					},
-					to: {
-						height: 'var(--radix-accordion-content-height)'
-					}
+					from: { height: '0' },
+					to: { height: 'var(--radix-accordion-content-height)' }
 				},
 				'accordion-up': {
-					from: {
-						height: 'var(--radix-accordion-content-height)'
-					},
-					to: {
-						height: '0'
-					}
+					from: { height: 'var(--radix-accordion-content-height)' },
+					to: { height: '0' }
+				},
+				'pulse-glow': {
+					'0%, 100%': { boxShadow: '0 0 5px 0px rgba(0, 245, 255, 0.5)' },
+					'50%': { boxShadow: '0 0 20px 5px rgba(0, 245, 255, 0.8)' }
+				},
+				'float': {
+					'0%, 100%': { transform: 'translateY(0)' },
+					'50%': { transform: 'translateY(-10px)' }
+				},
+				'gradient-shift': {
+					'0%': { backgroundPosition: '0% 50%' },
+					'50%': { backgroundPosition: '100% 50%' },
+					'100%': { backgroundPosition: '0% 50%' }
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'pulse-glow': 'pulse-glow 2s infinite',
+				'float': 'float 4s ease-in-out infinite',
+				'gradient-shift': 'gradient-shift 3s ease infinite'
+			},
+			backgroundImage: {
+				'cyber-grid': 'linear-gradient(rgba(33, 118, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(33, 118, 255, 0.05) 1px, transparent 1px)',
+				'gaming-gradient': 'linear-gradient(to right, #6939FF, #2176FF, #00F5FF, #FF2E63)',
+				'hero-pattern': 'radial-gradient(circle at 25% 25%, rgba(0, 245, 255, 0.2) 0%, transparent 50%), radial-gradient(circle at 75% 75%, rgba(105, 57, 255, 0.2) 0%, transparent 50%)'
+			},
+			backgroundSize: {
+				'cyber-grid-size': '30px 30px'
 			}
 		}
 	},
