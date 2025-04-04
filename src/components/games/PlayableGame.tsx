@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Expand, ThumbsUp, ThumbsDown, Share2, Trophy } from "lucide-react";
 import { Link } from "react-router-dom";
+import { toast } from "sonner";
 
 interface PlayableGameProps {
   id: string | number;
@@ -34,6 +35,9 @@ export function PlayableGame({
   const [isDisliked, setIsDisliked] = useState(false);
   const [currentLikes, setCurrentLikes] = useState(likes);
   const [currentDislikes, setCurrentDislikes] = useState(dislikes);
+  const [isLoading, setIsLoading] = useState(true);
+  
+  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
 
   const toggleFullscreen = () => {
     const gameFrame = document.getElementById("game-frame");
@@ -63,6 +67,11 @@ export function PlayableGame({
   }, []);
 
   const handleLike = () => {
+    if (!isLoggedIn) {
+      toast.error("Please sign in to rate games");
+      return;
+    }
+    
     if (isLiked) {
       setCurrentLikes(prev => prev - 1);
       setIsLiked(false);
@@ -77,6 +86,11 @@ export function PlayableGame({
   };
 
   const handleDislike = () => {
+    if (!isLoggedIn) {
+      toast.error("Please sign in to rate games");
+      return;
+    }
+    
     if (isDisliked) {
       setCurrentDislikes(prev => prev - 1);
       setIsDisliked(false);
@@ -90,7 +104,9 @@ export function PlayableGame({
     }
   };
 
-  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+  const handleIframeLoad = () => {
+    setIsLoading(false);
+  };
 
   return (
     <div className="container mx-auto px-4 py-6">
@@ -121,7 +137,22 @@ export function PlayableGame({
               <Expand className="mr-2 h-4 w-4" />
               Fullscreen
             </Button>
-            <Button variant="outline" onClick={() => window.navigator.share?.({ title, url: window.location.href })}>
+            <Button 
+              variant="outline" 
+              onClick={() => {
+                if (navigator.share) {
+                  navigator.share({
+                    title,
+                    url: window.location.href
+                  }).catch(() => {
+                    toast.error("Couldn't share. Try copying the URL instead.");
+                  });
+                } else {
+                  navigator.clipboard.writeText(window.location.href);
+                  toast.success("Link copied to clipboard!");
+                }
+              }}
+            >
               <Share2 className="mr-2 h-4 w-4" />
               Share
             </Button>
@@ -129,6 +160,15 @@ export function PlayableGame({
         </div>
         
         <Card className="w-full overflow-hidden border-gaming-primary/20 aspect-video relative">
+          {isLoading && (
+            <div className="absolute inset-0 flex items-center justify-center bg-background/80 z-20">
+              <div className="text-center">
+                <div className="loading-spinner mb-4"></div>
+                <p>Loading game...</p>
+              </div>
+            </div>
+          )}
+          
           {!isLoggedIn && (
             <div className="absolute inset-0 bg-black/80 flex items-center justify-center z-10">
               <div className="text-center p-6 max-w-md">
@@ -151,6 +191,9 @@ export function PlayableGame({
             className="w-full h-full border-0" 
             allowFullScreen
             title={title}
+            onLoad={handleIframeLoad}
+            allow="fullscreen"
+            sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
           ></iframe>
         </Card>
         

@@ -5,83 +5,52 @@
 
 @layer base {
   :root {
-    --background: 217 33% 17%;
-    --foreground: 210 40% 98%;
-
-    --card: 219 30% 22%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 219 30% 25%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 255 100% 61%;
-    --primary-foreground: 210 40% 98%;
-
-    --secondary: 217 91% 57%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 219 30% 30%;
-    --muted-foreground: 215 20% 65%;
-
-    --accent: 346 100% 59%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217 19% 27%;
-    --input: 217 19% 27%;
-    --ring: 255 100% 61%;
-
-    --radius: 0.75rem;
-
-    --sidebar-background: 222 47% 11%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 255 100% 61%;
-    --sidebar-primary-foreground: 210 40% 98%;
-    --sidebar-accent: 223 47% 16%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 223 47% 16%;
-    --sidebar-ring: 255 100% 61%;
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 240 5.9% 10%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 240 5.9% 10%;
+    --radius: 0.5rem;
+    --gaming-primary: 263 80% 58%;
+    --gaming-accent: 12 90% 55%;
   }
 
-  .light {
-    --background: 0 0% 98%;
-    --foreground: 217 33% 17%;
-
-    --card: 210 20% 96%;
-    --card-foreground: 217 33% 17%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 217 33% 17%;
-
-    --primary: 255 100% 61%;
-    --primary-foreground: 210 40% 98%;
-
-    --secondary: 217 91% 57%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 210 20% 92%;
-    --muted-foreground: 215 15% 45%;
-
-    --accent: 346 100% 59%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 255 100% 61%;
-    
-    --sidebar-background: 210 20% 96%;
-    --sidebar-foreground: 217 33% 17%;
-    --sidebar-primary: 255 100% 61%;
-    --sidebar-primary-foreground: 210 40% 98%;
-    --sidebar-accent: 210 20% 92%;
-    --sidebar-accent-foreground: 217 33% 17%;
-    --sidebar-border: 214.3 31.8% 91.4%;
-    --sidebar-ring: 255 100% 61%;
+  .dark {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 240 5.9% 10%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 240 4.9% 83.9%;
+    --gaming-primary: 263 80% 58%;
+    --gaming-accent: 12 90% 55%;
   }
 }
 
@@ -89,55 +58,82 @@
   * {
     @apply border-border;
   }
-
   body {
     @apply bg-background text-foreground antialiased;
-    font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
 
-@layer components {
-  .neon-border {
-    @apply relative rounded-lg;
+/* Game Card */
+.game-card {
+  transition: transform 0.3s ease;
+}
+
+.game-card:hover {
+  transform: translateY(-5px);
+}
+
+/* Cyber Background */
+.cyber-bg {
+  background-color: #0e0e16;
+  background-image: 
+    linear-gradient(rgba(30, 39, 97, 0.2) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(30, 39, 97, 0.2) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* Hero Background */
+.hero-bg {
+  background: linear-gradient(135deg, #0e0e16 0%, #1e1e30 100%);
+}
+
+/* Gaming Gradient */
+.bg-gaming-gradient {
+  background: linear-gradient(90deg, 
+    hsl(var(--gaming-primary)) 0%, 
+    hsl(var(--gaming-accent)) 50%, 
+    hsl(var(--gaming-primary)) 100%);
+}
+
+.animate-gradient-shift {
+  animation: gradient-shift 3s ease infinite;
+}
+
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
   }
-  
-  .neon-border::before {
-    content: "";
-    @apply absolute inset-0 -z-10 bg-gaming-gradient bg-[length:200%_200%] rounded-lg blur-sm animate-gradient-shift;
+  50% {
+    background-position: 100% 50%;
   }
-  
-  .game-card {
-    @apply relative overflow-hidden rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-[0_0_15px_rgba(0,245,255,0.5)];
-  }
-  
-  .game-card::before {
-    content: "";
-    @apply absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 transition-opacity duration-300;
-  }
-  
-  .game-card:hover::before {
-    @apply opacity-100;
-  }
-  
-  .cyber-bg {
-    @apply bg-cyber-grid bg-cyber-grid-size;
-  }
-  
-  .hero-bg {
-    @apply bg-hero-pattern bg-cover bg-center;
+  100% {
+    background-position: 0% 50%;
   }
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+/* Neon Border */
+.neon-border {
+  border: 1px solid transparent;
+  box-shadow: 0 0 10px 0 rgba(var(--gaming-primary), 0.3);
+  transition: all 0.3s ease;
 }
 
-::-webkit-scrollbar-track {
-  @apply bg-muted/30 rounded-full;
+.neon-border:hover {
+  border-color: hsl(var(--gaming-primary) / 0.3);
+  box-shadow: 0 0 15px 0 rgba(var(--gaming-primary), 0.5);
 }
 
-::-webkit-scrollbar-thumb {
-  @apply bg-primary/70 rounded-full hover:bg-primary transition-colors;
+/* Loading Spinner */
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  margin: 0 auto;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  border-top-color: hsl(var(--gaming-primary));
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }

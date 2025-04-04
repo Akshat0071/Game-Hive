@@ -4,12 +4,34 @@ import { Link } from "react-router-dom";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Bell, Menu, Search, X } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Bell, Menu, Search, X, LogOut, User, Settings, Trophy, Gamepad } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuLabel, 
+  DropdownMenuSeparator, 
+  DropdownMenuTrigger 
+} from "@/components/ui/dropdown-menu";
+import { toast } from "sonner";
 
 export function Navbar({ className }: { className?: string }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  
+  // Check if user is logged in
+  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+  const user = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")!) : null;
+  
+  const handleLogout = () => {
+    localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("user");
+    toast.success("Logged out successfully");
+    // Force a page reload to update UI state
+    window.location.href = "/";
+  };
 
   return (
     <header className={cn("border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50", className)}>
@@ -67,15 +89,68 @@ export function Navbar({ className }: { className?: string }) {
         {/* Theme Toggle */}
         <ThemeToggle className="mr-2" />
 
-        {/* Auth Buttons */}
-        <div className="hidden sm:flex items-center space-x-2">
-          <Button variant="outline" size="sm" asChild>
-            <Link to="/login">Sign In</Link>
-          </Button>
-          <Button size="sm" className="bg-gaming-primary hover:bg-gaming-primary/90" asChild>
-            <Link to="/register">Sign Up</Link>
-          </Button>
-        </div>
+        {/* Auth Buttons or User Profile */}
+        {isLoggedIn && user ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="relative h-8 w-8 rounded-full" aria-label="User menu">
+                <Avatar className="h-8 w-8">
+                  <AvatarImage src={user.avatar} alt={user.name} />
+                  <AvatarFallback>{user.name.charAt(0).toUpperCase()}</AvatarFallback>
+                </Avatar>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56" align="end" forceMount>
+              <DropdownMenuLabel className="font-normal">
+                <div className="flex flex-col space-y-1">
+                  <p className="text-sm font-medium leading-none">Hi, {user.name}</p>
+                  <p className="text-xs leading-none text-muted-foreground">
+                    {user.email}
+                  </p>
+                </div>
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Link to="/profile" className="cursor-pointer flex items-center">
+                  <User className="mr-2 h-4 w-4" />
+                  <span>Profile</span>
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/games" className="cursor-pointer flex items-center">
+                  <Gamepad className="mr-2 h-4 w-4" />
+                  <span>My Games</span>
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/leaderboard" className="cursor-pointer flex items-center">
+                  <Trophy className="mr-2 h-4 w-4" />
+                  <span>My Scores</span>
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/settings" className="cursor-pointer flex items-center">
+                  <Settings className="mr-2 h-4 w-4" />
+                  <span>Settings</span>
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
+                <LogOut className="mr-2 h-4 w-4" />
+                <span>Log out</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : (
+          <div className="hidden sm:flex items-center space-x-2">
+            <Button variant="outline" size="sm" asChild>
+              <Link to="/login">Sign In</Link>
+            </Button>
+            <Button size="sm" className="bg-gaming-primary hover:bg-gaming-primary/90" asChild>
+              <Link to="/register">Sign Up</Link>
+            </Button>
+          </div>
+        )}
       </div>
 
       {/* Mobile Search Bar */}
@@ -107,14 +182,52 @@ export function Navbar({ className }: { className?: string }) {
           <Link to="/community" className="block py-2 hover:text-primary">
             Community
           </Link>
-          <div className="pt-2 flex items-center space-x-2">
-            <Button variant="outline" size="sm" className="flex-1" asChild>
-              <Link to="/login">Sign In</Link>
-            </Button>
-            <Button size="sm" className="flex-1 bg-gaming-primary hover:bg-gaming-primary/90" asChild>
-              <Link to="/register">Sign Up</Link>
-            </Button>
-          </div>
+          {!isLoggedIn ? (
+            <div className="pt-2 flex items-center space-x-2">
+              <Button variant="outline" size="sm" className="flex-1" asChild>
+                <Link to="/login">Sign In</Link>
+              </Button>
+              <Button size="sm" className="flex-1 bg-gaming-primary hover:bg-gaming-primary/90" asChild>
+                <Link to="/register">Sign Up</Link>
+              </Button>
+            </div>
+          ) : (
+            <div className="pt-2 space-y-3">
+              <div className="flex items-center space-x-3">
+                <Avatar className="h-10 w-10">
+                  <AvatarImage src={user?.avatar} alt={user?.name} />
+                  <AvatarFallback>{user?.name.charAt(0).toUpperCase()}</AvatarFallback>
+                </Avatar>
+                <div>
+                  <p className="text-sm font-medium">Hi, {user?.name}</p>
+                  <p className="text-xs text-muted-foreground">{user?.email}</p>
+                </div>
+              </div>
+              <div className="space-y-1">
+                <Link to="/profile" className="block py-2 hover:text-primary text-sm">
+                  <User className="inline-block mr-2 h-4 w-4" />
+                  Profile
+                </Link>
+                <Link to="/games" className="block py-2 hover:text-primary text-sm">
+                  <Gamepad className="inline-block mr-2 h-4 w-4" />
+                  My Games
+                </Link>
+                <Link to="/settings" className="block py-2 hover:text-primary text-sm">
+                  <Settings className="inline-block mr-2 h-4 w-4" />
+                  Settings
+                </Link>
+                <Button 
+                  variant="destructive" 
+                  size="sm" 
+                  className="w-full mt-2" 
+                  onClick={handleLogout}
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Log out
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </header>
