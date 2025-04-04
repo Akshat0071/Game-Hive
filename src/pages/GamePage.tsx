@@ -4,13 +4,13 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { PlayableGame } from "@/components/games/PlayableGame";
 
-// Sample games data - in a real app, this would come from an API
+// Sample games data with updated game URLs for better embedding compatibility
 const GAMES_DATA = [
   {
     id: "tetris",
     title: "Tetris Classic",
     description: "The classic puzzle game where you arrange falling blocks to create complete rows. Test your spatial awareness and quick thinking in this timeless favorite!",
-    gameUrl: "https://tetris.com/play-tetris",
+    gameUrl: "https://www.playemulator.com/online-games/tetris/",
     category: "Puzzle",
     tags: ["Classic", "Strategy"],
     controls: "Use arrow keys to move blocks, up arrow to rotate, spacebar to drop quickly"
@@ -19,7 +19,7 @@ const GAMES_DATA = [
     id: "snake",
     title: "Snake.io",
     description: "Control a snake and eat food to grow longer. Avoid hitting walls or your own tail in this modern take on the classic Snake game!",
-    gameUrl: "https://playsnake.org/",
+    gameUrl: "https://www.google.com/fbx?fbx=snake_arcade",
     category: "Arcade",
     tags: ["Classic", "Multiplayer"],
     controls: "Use arrow keys or WASD to change direction"
@@ -37,7 +37,7 @@ const GAMES_DATA = [
     id: "pacman",
     title: "Pac-Man",
     description: "Navigate through a maze while eating dots and avoiding ghosts in this iconic arcade game that defined a generation of gaming!",
-    gameUrl: "https://freepacman.org/",
+    gameUrl: "https://www.google.com/logos/2010/pacman10-i.html",
     category: "Arcade",
     tags: ["Classic", "Maze"],
     controls: "Use arrow keys to move Pac-Man through the maze"

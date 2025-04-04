@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Expand, ThumbsUp, ThumbsDown, Share2, Trophy } from "lucide-react";
+import { Expand, ThumbsUp, ThumbsDown, Share2, Trophy, AlertTriangle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
 
@@ -36,6 +36,7 @@ export function PlayableGame({
   const [currentLikes, setCurrentLikes] = useState(likes);
   const [currentDislikes, setCurrentDislikes] = useState(dislikes);
   const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   
   const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
 
@@ -61,10 +62,14 @@ export function PlayableGame({
 
     document.addEventListener("fullscreenchange", fullscreenChangeHandler);
     
+    // Reset loading and error states when game changes
+    setIsLoading(true);
+    setLoadError(false);
+    
     return () => {
       document.removeEventListener("fullscreenchange", fullscreenChangeHandler);
     };
-  }, []);
+  }, [gameUrl]);
 
   const handleLike = () => {
     if (!isLoggedIn) {
@@ -106,6 +111,27 @@ export function PlayableGame({
 
   const handleIframeLoad = () => {
     setIsLoading(false);
+    setLoadError(false);
+  };
+
+  const handleIframeError = () => {
+    setIsLoading(false);
+    setLoadError(true);
+    toast.error(`Failed to load ${title}. Please try again later or try a different game.`);
+  };
+
+  const tryAgain = () => {
+    setIsLoading(true);
+    setLoadError(false);
+    // Force iframe reload by temporarily removing the src
+    const iframe = document.getElementById("game-frame") as HTMLIFrameElement;
+    if (iframe) {
+      const currentSrc = iframe.src;
+      iframe.src = "about:blank";
+      setTimeout(() => {
+        iframe.src = currentSrc;
+      }, 100);
+    }
   };
 
   return (
@@ -169,6 +195,22 @@ export function PlayableGame({
             </div>
           )}
           
+          {loadError && (
+            <div className="absolute inset-0 flex items-center justify-center bg-background/80 z-20">
+              <div className="text-center p-6 max-w-md">
+                <AlertTriangle className="mx-auto h-12 w-12 text-red-500 mb-4" />
+                <h3 className="text-xl font-bold mb-2">Game Failed to Load</h3>
+                <p className="mb-4">Sorry, we couldn't load this game. This may be due to browser restrictions or the game source being unavailable.</p>
+                <div className="flex gap-3 justify-center">
+                  <Button onClick={tryAgain}>Try Again</Button>
+                  <Button variant="outline" asChild>
+                    <Link to="/games">Browse Other Games</Link>
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+          
           {!isLoggedIn && (
             <div className="absolute inset-0 bg-black/80 flex items-center justify-center z-10">
               <div className="text-center p-6 max-w-md">
@@ -192,8 +234,9 @@ export function PlayableGame({
             allowFullScreen
             title={title}
             onLoad={handleIframeLoad}
+            onError={handleIframeError}
             allow="fullscreen"
-            sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
+            sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-modals"
           ></iframe>
         </Card>
         
