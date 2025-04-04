@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Controller, Gamepad, Trophy, User, UserPlus, Zap } from "lucide-react";
+import { Gamepad, Trophy, User, UserPlus, Zap } from "lucide-react";
 
 export function HeroSection() {
   // Check if user is logged in
@@ -33,7 +33,7 @@ export function HeroSection() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button size="lg" className="bg-gaming-primary hover:bg-gaming-primary/90 text-white" asChild>
               <Link to="/games">
-                <Controller className="mr-2 h-5 w-5" />
+                <Gamepad className="mr-2 h-5 w-5" />
                 Play Now
               </Link>
             </Button>

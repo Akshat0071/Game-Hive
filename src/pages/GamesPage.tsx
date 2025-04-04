@@ -6,7 +6,7 @@ import { GameCard } from "@/components/games/GameCard";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Fire, Gamepad, PlayCircle, Search, Sparkles, TrendingUp } from "lucide-react";
+import { ArrowRight, Flame, Gamepad, PlayCircle, Search, Sparkles, TrendingUp } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -139,7 +139,7 @@ export default function GamesPage() {
           <div className="container mx-auto px-4">
             <div className="mb-6 flex justify-between items-center">
               <h2 className="text-2xl font-bold flex items-center">
-                <Fire className="mr-2 h-6 w-6 text-gaming-primary" />
+                <Flame className="mr-2 h-6 w-6 text-gaming-primary" />
                 Featured Games
               </h2>
               <Link to="#all-games" className="text-gaming-primary hover:text-gaming-primary/90 flex items-center">
