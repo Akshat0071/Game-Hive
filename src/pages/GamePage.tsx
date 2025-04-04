@@ -4,13 +4,13 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { PlayableGame } from "@/components/games/PlayableGame";
 
-// Sample games data with updated game URLs for better embedding compatibility
+// Updated games data with more reliable game URLs
 const GAMES_DATA = [
   {
     id: "tetris",
     title: "Tetris Classic",
     description: "The classic puzzle game where you arrange falling blocks to create complete rows. Test your spatial awareness and quick thinking in this timeless favorite!",
-    gameUrl: "https://www.playemulator.com/online-games/tetris/",
+    gameUrl: "https://tetris.com/play-tetris",
     category: "Puzzle",
     tags: ["Classic", "Strategy"],
     controls: "Use arrow keys to move blocks, up arrow to rotate, spacebar to drop quickly"
@@ -19,7 +19,7 @@ const GAMES_DATA = [
     id: "snake",
     title: "Snake.io",
     description: "Control a snake and eat food to grow longer. Avoid hitting walls or your own tail in this modern take on the classic Snake game!",
-    gameUrl: "https://www.google.com/fbx?fbx=snake_arcade",
+    gameUrl: "https://snake.io",
     category: "Arcade",
     tags: ["Classic", "Multiplayer"],
     controls: "Use arrow keys or WASD to change direction"
@@ -28,7 +28,7 @@ const GAMES_DATA = [
     id: "2048",
     title: "2048",
     description: "Merge tiles with the same number to create a tile with the value 2048. A simple yet addictive puzzle game that tests your strategic thinking!",
-    gameUrl: "https://play2048.co/",
+    gameUrl: "https://gabrielecirulli.github.io/2048/",
     category: "Puzzle",
     tags: ["Strategy", "Math"],
     controls: "Use arrow keys to move all tiles in one direction"
@@ -37,7 +37,7 @@ const GAMES_DATA = [
     id: "pacman",
     title: "Pac-Man",
     description: "Navigate through a maze while eating dots and avoiding ghosts in this iconic arcade game that defined a generation of gaming!",
-    gameUrl: "https://www.google.com/logos/2010/pacman10-i.html",
+    gameUrl: "https://www.freepacman.org/",
     category: "Arcade",
     tags: ["Classic", "Maze"],
     controls: "Use arrow keys to move Pac-Man through the maze"
@@ -76,3 +76,4 @@ export default function GamePage() {
     </div>
   );
 }
+
