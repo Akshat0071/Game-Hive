@@ -6,27 +6,68 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Github, Mail, MessageSquare } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 export function LoginForm() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    
+    // Simulate login - in a real app, this would connect to your authentication service
+    setTimeout(() => {
+      setIsLoading(false);
+      toast.success("Logged in successfully!");
+      navigate("/games");
+      // In a real app, you would store auth token and user info
+      localStorage.setItem("isLoggedIn", "true");
+      localStorage.setItem("user", JSON.stringify({
+        name: email.split("@")[0],
+        email,
+        avatar: `https://avatar.vercel.sh/${email}`,
+      }));
+    }, 1500);
+  };
+
+  const handleSocialLogin = (provider: string) => {
+    toast.success(`Logging in with ${provider}...`);
+    // In a real app, you would redirect to OAuth provider
+    setTimeout(() => {
+      navigate("/games");
+      localStorage.setItem("isLoggedIn", "true");
+      localStorage.setItem("user", JSON.stringify({
+        name: provider + "User",
+        email: provider.toLowerCase() + "user@example.com",
+        avatar: `https://avatar.vercel.sh/${provider}`,
+      }));
+    }, 1500);
+  };
+
   return (
     <Card className="w-full max-w-md mx-auto shadow-lg neon-border">
       <CardHeader className="space-y-1">
-        <CardTitle className="text-2xl text-center">Sign in</CardTitle>
+        <CardTitle className="text-2xl text-center">Sign in to PlayNexus</CardTitle>
         <CardDescription className="text-center">
-          Choose your preferred sign in method
+          Join thousands of gamers playing free online games
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid grid-cols-3 gap-3">
-          <Button variant="outline" className="w-full">
+          <Button variant="outline" className="w-full" onClick={() => handleSocialLogin("Github")}>
             <Github className="h-5 w-5 mr-2" />
             Github
           </Button>
-          <Button variant="outline" className="w-full">
+          <Button variant="outline" className="w-full" onClick={() => handleSocialLogin("Discord")}>
             <MessageSquare className="h-5 w-5 mr-2" />
             Discord
           </Button>
-          <Button variant="outline" className="w-full">
+          <Button variant="outline" className="w-full" onClick={() => handleSocialLogin("Google")}>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" className="h-5 w-5 mr-2">
               <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"/>
               <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"/>
@@ -48,10 +89,17 @@ export function LoginForm() {
           </div>
         </div>
         
-        <div className="space-y-3">
+        <form onSubmit={handleLogin} className="space-y-3">
           <div className="space-y-1">
             <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" placeholder="name@example.com" />
+            <Input 
+              id="email" 
+              type="email" 
+              placeholder="name@example.com" 
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
           </div>
           <div className="space-y-1">
             <div className="flex items-center justify-between">
@@ -60,12 +108,22 @@ export function LoginForm() {
                 Forgot password?
               </Link>
             </div>
-            <Input id="password" type="password" />
+            <Input 
+              id="password" 
+              type="password" 
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
           </div>
-          <Button className="w-full bg-gaming-primary hover:bg-gaming-primary/90">
-            Sign in with Email
+          <Button 
+            type="submit" 
+            className="w-full bg-gaming-primary hover:bg-gaming-primary/90"
+            disabled={isLoading}
+          >
+            {isLoading ? "Signing in..." : "Sign in with Email"}
           </Button>
-        </div>
+        </form>
       </CardContent>
       <CardFooter className="flex justify-center">
         <p className="text-sm text-muted-foreground">

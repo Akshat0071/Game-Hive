@@ -9,8 +9,10 @@ import { ThemeProvider } from "@/components/theme/ThemeProvider";
 // Pages
 import HomePage from "./pages/HomePage";
 import GamesPage from "./pages/GamesPage";
+import GamePage from "./pages/GamePage";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import LeaderboardPage from "./pages/LeaderboardPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -25,6 +27,8 @@ const App = () => (
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/games" element={<GamesPage />} />
+            <Route path="/game/:gameId" element={<GamePage />} />
+            <Route path="/leaderboard" element={<LeaderboardPage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
