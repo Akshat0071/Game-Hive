@@ -1,4 +1,3 @@
-
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -66,10 +65,10 @@ export function UpcomingEvents() {
                   </Badge>
                 </div>
                 <CardDescription>
-                  <div className="flex items-center space-x-1 text-muted-foreground">
+                  <span className="flex items-center space-x-1 text-muted-foreground">
                     <Calendar className="h-3.5 w-3.5" />
                     <span>{event.date} at {event.time}</span>
-                  </div>
+                  </span>
                 </CardDescription>
               </CardHeader>
               <CardContent>

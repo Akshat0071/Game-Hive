@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -65,10 +64,10 @@ export default {
 				},
 				// Gaming theme colors
 				gaming: {
-					primary: '#6939FF',
-					secondary: '#2176FF',
-					accent: '#FF2E63',
-					highlight: '#00F5FF',
+					primary: '#FFB800',
+					secondary: '#FF8C00',
+					accent: '#FF6B00',
+					highlight: '#FFE566',
 					dark: '#0F172A',
 					light: '#E2E8F0'
 				}
@@ -109,9 +108,9 @@ export default {
 				'gradient-shift': 'gradient-shift 3s ease infinite'
 			},
 			backgroundImage: {
-				'cyber-grid': 'linear-gradient(rgba(33, 118, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(33, 118, 255, 0.05) 1px, transparent 1px)',
-				'gaming-gradient': 'linear-gradient(to right, #6939FF, #2176FF, #00F5FF, #FF2E63)',
-				'hero-pattern': 'radial-gradient(circle at 25% 25%, rgba(0, 245, 255, 0.2) 0%, transparent 50%), radial-gradient(circle at 75% 75%, rgba(105, 57, 255, 0.2) 0%, transparent 50%)'
+				'cyber-grid': 'linear-gradient(rgba(255, 184, 0, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 184, 0, 0.05) 1px, transparent 1px)',
+				'gaming-gradient': 'linear-gradient(to right, #FFB800, #FF8C00, #FFE566, #FF6B00)',
+				'hero-pattern': 'radial-gradient(circle at 25% 25%, rgba(255, 229, 102, 0.2) 0%, transparent 50%), radial-gradient(circle at 75% 75%, rgba(255, 184, 0, 0.2) 0%, transparent 50%)'
 			},
 			backgroundSize: {
 				'cyber-grid-size': '30px 30px'

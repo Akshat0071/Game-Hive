@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
@@ -15,22 +14,19 @@ import {
   DropdownMenuSeparator, 
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
-import { toast } from "sonner";
+import { useAuth } from "@/contexts/AuthContext";
 
 export function Navbar({ className }: { className?: string }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   
-  // Check if user is logged in
-  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-  const user = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")!) : null;
-  
-  const handleLogout = () => {
-    localStorage.removeItem("isLoggedIn");
-    localStorage.removeItem("user");
-    toast.success("Logged out successfully");
-    // Force a page reload to update UI state
-    window.location.href = "/";
+  // Use the AuthContext instead of localStorage
+  const { user, logout } = useAuth();
+
+  // Get user initials safely
+  const getUserInitials = () => {
+    if (!user || !user.username) return "U";
+    return user.username.substring(0, 2).toUpperCase();
   };
 
   return (
@@ -43,8 +39,8 @@ export function Navbar({ className }: { className?: string }) {
         
         {/* Logo */}
         <Link to="/" className="flex items-center mr-4 space-x-2">
-          <span className="text-2xl font-bold bg-clip-text text-transparent bg-gaming-gradient animate-gradient-shift bg-[length:200%_auto]">
-            NEXUS
+          <span className="text-2xl font-bold text-gaming-primary">
+            GameHive 🐝
           </span>
         </Link>
 
@@ -90,64 +86,51 @@ export function Navbar({ className }: { className?: string }) {
         <ThemeToggle className="mr-2" />
 
         {/* Auth Buttons or User Profile */}
-        {isLoggedIn && user ? (
+        {user ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative h-8 w-8 rounded-full" aria-label="User menu">
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback>{user.name.charAt(0).toUpperCase()}</AvatarFallback>
+                  <AvatarImage src={user.avatar} alt={user.username || "User"} />
+                  <AvatarFallback>{getUserInitials()}</AvatarFallback>
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56" align="end" forceMount>
-              <DropdownMenuLabel className="font-normal">
-                <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium leading-none">Hi, {user.name}</p>
-                  <p className="text-xs leading-none text-muted-foreground">
-                    {user.email}
-                  </p>
-                </div>
-              </DropdownMenuLabel>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
-                <Link to="/profile" className="cursor-pointer flex items-center">
+                <Link to="/profile" className="flex items-center">
                   <User className="mr-2 h-4 w-4" />
                   <span>Profile</span>
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link to="/games" className="cursor-pointer flex items-center">
-                  <Gamepad className="mr-2 h-4 w-4" />
-                  <span>My Games</span>
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link to="/leaderboard" className="cursor-pointer flex items-center">
+                <Link to="/profile?tab=achievements" className="flex items-center">
                   <Trophy className="mr-2 h-4 w-4" />
-                  <span>My Scores</span>
+                  <span>Achievements</span>
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link to="/settings" className="cursor-pointer flex items-center">
+                <Link to="/profile?tab=settings" className="flex items-center">
                   <Settings className="mr-2 h-4 w-4" />
                   <span>Settings</span>
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
+              <DropdownMenuItem onClick={logout} className="text-red-500 focus:text-red-500">
                 <LogOut className="mr-2 h-4 w-4" />
                 <span>Log out</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         ) : (
-          <div className="hidden sm:flex items-center space-x-2">
-            <Button variant="outline" size="sm" asChild>
-              <Link to="/login">Sign In</Link>
+          <div className="flex items-center space-x-2">
+            <Button variant="ghost" asChild>
+              <Link to="/login">Log in</Link>
             </Button>
-            <Button size="sm" className="bg-gaming-primary hover:bg-gaming-primary/90" asChild>
-              <Link to="/register">Sign Up</Link>
+            <Button asChild>
+              <Link to="/signup">Sign up</Link>
             </Button>
           </div>
         )}
@@ -182,25 +165,25 @@ export function Navbar({ className }: { className?: string }) {
           <Link to="/community" className="block py-2 hover:text-primary">
             Community
           </Link>
-          {!isLoggedIn ? (
+          {!user ? (
             <div className="pt-2 flex items-center space-x-2">
               <Button variant="outline" size="sm" className="flex-1" asChild>
                 <Link to="/login">Sign In</Link>
               </Button>
               <Button size="sm" className="flex-1 bg-gaming-primary hover:bg-gaming-primary/90" asChild>
-                <Link to="/register">Sign Up</Link>
+                <Link to="/signup">Sign Up</Link>
               </Button>
             </div>
           ) : (
             <div className="pt-2 space-y-3">
               <div className="flex items-center space-x-3">
                 <Avatar className="h-10 w-10">
-                  <AvatarImage src={user?.avatar} alt={user?.name} />
-                  <AvatarFallback>{user?.name.charAt(0).toUpperCase()}</AvatarFallback>
+                  <AvatarImage src={user?.avatar} alt={user?.username || "User"} />
+                  <AvatarFallback>{getUserInitials()}</AvatarFallback>
                 </Avatar>
                 <div>
-                  <p className="text-sm font-medium">Hi, {user?.name}</p>
-                  <p className="text-xs text-muted-foreground">{user?.email}</p>
+                  <p className="text-sm font-medium">Hi, {user?.username || "User"}</p>
+                  <p className="text-xs text-muted-foreground">{user?.email || ""}</p>
                 </div>
               </div>
               <div className="space-y-1">
@@ -212,19 +195,18 @@ export function Navbar({ className }: { className?: string }) {
                   <Gamepad className="inline-block mr-2 h-4 w-4" />
                   My Games
                 </Link>
-                <Link to="/settings" className="block py-2 hover:text-primary text-sm">
+                <Link to="/profile?tab=achievements" className="block py-2 hover:text-primary text-sm">
+                  <Trophy className="inline-block mr-2 h-4 w-4" />
+                  Achievements
+                </Link>
+                <Link to="/profile?tab=settings" className="block py-2 hover:text-primary text-sm">
                   <Settings className="inline-block mr-2 h-4 w-4" />
                   Settings
                 </Link>
-                <Button 
-                  variant="destructive" 
-                  size="sm" 
-                  className="w-full mt-2" 
-                  onClick={handleLogout}
-                >
-                  <LogOut className="mr-2 h-4 w-4" />
+                <button onClick={logout} className="block w-full text-left py-2 hover:text-primary text-sm text-red-500">
+                  <LogOut className="inline-block mr-2 h-4 w-4" />
                   Log out
-                </Button>
+                </button>
               </div>
             </div>
           )}

@@ -1,456 +1,577 @@
-import { useState } from "react";
-import { Navbar } from "@/components/layout/Navbar";
-import { Footer } from "@/components/layout/Footer";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
+import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import { 
+  LeaderboardEntry, 
+  PlayerHistory, 
+  CategoryLeaderboard, 
+  Reward, 
+  Season, 
+  PlayerStats 
+} from "@/types/leaderboard";
+import { leaderboardService } from "@/services/leaderboardService";
+import { useUser } from "@/contexts/UserContext";
 import { Button } from "@/components/ui/button";
-import { ArrowUp, Medal, Search, Trophy } from "lucide-react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Link } from "react-router-dom";
+import { Input } from "@/components/ui/input";
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from "@/components/ui/select";
+import { 
+  Tabs, 
+  TabsContent, 
+  TabsList, 
+  TabsTrigger 
+} from "@/components/ui/tabs";
+import { 
+  Card, 
+  CardContent, 
+  CardDescription, 
+  CardFooter, 
+  CardHeader, 
+  CardTitle 
+} from "@/components/ui/card";
+import { 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableHead, 
+  TableHeader, 
+  TableRow 
+} from "@/components/ui/table";
+import { 
+  LineChart, 
+  Line, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  Legend, 
+  ResponsiveContainer 
+} from "recharts";
+import { 
+  Trophy, 
+  Medal, 
+  Star, 
+  TrendingUp, 
+  Calendar, 
+  Search, 
+  Filter, 
+  Award, 
+  Crown, 
+  Target, 
+  BarChart3, 
+  History,
+  Minus
+} from "lucide-react";
 
-// Sample leaderboard data
-const LEADERBOARD_DATA = [
-  {
-    id: 1,
-    rank: 1,
-    player: {
-      name: "ProGamer123",
-      avatar: "/placeholder.svg"
-    },
-    game: "Tetris Classic",
-    score: 99875,
-    date: "2025-04-03",
-    change: 0
-  },
-  {
-    id: 2,
-    rank: 2,
-    player: {
-      name: "ShadowHunter",
-      avatar: "/placeholder.svg"
-    },
-    game: "Snake.io",
-    score: 95642,
-    date: "2025-04-02",
-    change: 1
-  },
-  {
-    id: 3,
-    rank: 3,
-    player: {
-      name: "NinjaWarrior",
-      avatar: "/placeholder.svg"
-    },
-    game: "Pac-Man",
-    score: 90453,
-    date: "2025-04-01",
-    change: -1
-  },
-  {
-    id: 4,
-    rank: 4,
-    player: {
-      name: "StrategyMaster",
-      avatar: "/placeholder.svg"
-    },
-    game: "2048",
-    score: 87421,
-    date: "2025-04-03",
-    change: 2
-  },
-  {
-    id: 5,
-    rank: 5,
-    player: {
-      name: "LegendarySniper",
-      avatar: "/placeholder.svg"
-    },
-    game: "Flappy Bird",
-    score: 83569,
-    date: "2025-04-02",
-    change: -2
-  },
-  {
-    id: 6,
-    rank: 6,
-    player: {
-      name: "MidnightGamer",
-      avatar: "/placeholder.svg"
-    },
-    game: "Tetris Classic",
-    score: 81245,
-    date: "2025-04-01",
-    change: 3
-  },
-  {
-    id: 7,
-    rank: 7,
-    player: {
-      name: "PixelWarrior",
-      avatar: "/placeholder.svg"
-    },
-    game: "Snake.io",
-    score: 79654,
-    date: "2025-04-03",
-    change: 0
-  },
-  {
-    id: 8,
-    rank: 8,
-    player: {
-      name: "CyberNinja",
-      avatar: "/placeholder.svg"
-    },
-    game: "Pac-Man",
-    score: 76321,
-    date: "2025-04-02",
-    change: 5
-  },
-  {
-    id: 9,
-    rank: 9,
-    player: {
-      name: "EliteGamer",
-      avatar: "/placeholder.svg"
-    },
-    game: "2048",
-    score: 72145,
-    date: "2025-04-01",
-    change: -3
-  },
-  {
-    id: 10,
-    rank: 10,
-    player: {
-      name: "SpeedRunner",
-      avatar: "/placeholder.svg"
-    },
-    game: "Flappy Bird",
-    score: 69874,
-    date: "2025-04-03",
-    change: 2
-  },
-  {
-    id: 11,
-    rank: 11,
-    player: {
-      name: "RetroPlayer",
-      avatar: "/placeholder.svg"
-    },
-    game: "Tetris Classic",
-    score: 65432,
-    date: "2025-04-02",
-    change: 1
-  },
-  {
-    id: 12,
-    rank: 12,
-    player: {
-      name: "GamerKing",
-      avatar: "/placeholder.svg"
-    },
-    game: "Pac-Man",
-    score: 61298,
-    date: "2025-04-01",
-    change: -1
-  },
-  {
-    id: 13,
-    rank: 13,
-    player: {
-      name: "DigitalWarrior",
-      avatar: "/placeholder.svg"
-    },
-    game: "Snake.io",
-    score: 58741,
-    date: "2025-04-03",
-    change: 4
-  },
-  {
-    id: 14,
-    rank: 14,
-    player: {
-      name: "NeonPlayer",
-      avatar: "/placeholder.svg"
-    },
-    game: "2048",
-    score: 54321,
-    date: "2025-04-02",
-    change: 0
-  },
-  {
-    id: 15,
-    rank: 15,
-    player: {
-      name: "VirtualHero",
-      avatar: "/placeholder.svg"
-    },
-    game: "Flappy Bird",
-    score: 51298,
-    date: "2025-04-01",
-    change: -2
-  }
+// Time range options
+const TIME_RANGES = [
+  { value: "all", label: "All Time" },
+  { value: "today", label: "Today" },
+  { value: "week", label: "This Week" },
+  { value: "month", label: "This Month" },
+  { value: "year", label: "This Year" }
+];
+
+// Category options
+const CATEGORIES = [
+  { value: "all", label: "All Categories" },
+  { value: "Puzzle", label: "Puzzle" },
+  { value: "Arcade", label: "Arcade" },
+  { value: "Strategy", label: "Strategy" },
+  { value: "Action", label: "Action" }
+];
+
+// Game options (would come from game data in a real app)
+const GAMES = [
+  { value: "all", label: "All Games" },
+  { value: "tetris", label: "Tetris Classic" },
+  { value: "snake", label: "Snake.io" },
+  { value: "2048", label: "2048" },
+  { value: "memory", label: "Memory Match" }
 ];
 
 export default function LeaderboardPage() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [gameFilter, setGameFilter] = useState("all");
-  const [timeRange, setTimeRange] = useState("all");
+  const { user } = useUser();
+  const { gameId } = useParams<{ gameId: string }>();
   
-  // Filter leaderboard data based on search query and game filter
-  const filteredLeaderboard = LEADERBOARD_DATA.filter(entry => {
-    const matchesSearch = entry.player.name.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesGame = gameFilter === "all" || entry.game.toLowerCase() === gameFilter.toLowerCase();
-    return matchesSearch && matchesGame;
-  });
-
-  // Get current user's position - for demo purposes
-  const currentUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")!) : null;
-  const userRanking = currentUser ? {
-    id: 999,
-    rank: 42,
-    player: {
-      name: currentUser.name,
-      avatar: currentUser.avatar
-    },
-    game: "Tetris Classic",
-    score: 31245,
-    date: "2025-04-01",
-    change: 5
-  } : null;
-
+  // State for leaderboard data
+  const [leaderboardData, setLeaderboardData] = useState<LeaderboardEntry[]>([]);
+  const [categoryLeaderboards, setCategoryLeaderboards] = useState<CategoryLeaderboard[]>([]);
+  const [currentSeason, setCurrentSeason] = useState<Season | null>(null);
+  const [playerHistory, setPlayerHistory] = useState<PlayerHistory | null>(null);
+  const [playerStats, setPlayerStats] = useState<PlayerStats | null>(null);
+  const [rewards, setRewards] = useState<Reward[]>([]);
+  
+  // State for filters
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedGame, setSelectedGame] = useState(gameId || "all");
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedTimeRange, setSelectedTimeRange] = useState("all");
+  
+  // State for active tab
+  const [activeTab, setActiveTab] = useState("global");
+  
+  // Load leaderboard data
+  useEffect(() => {
+    const loadLeaderboardData = async () => {
+      try {
+        // Load global leaderboard
+        const data = await leaderboardService.getLeaderboard(
+          selectedGame !== "all" ? selectedGame : undefined,
+          selectedCategory !== "all" ? selectedCategory : undefined,
+          selectedTimeRange as any
+        );
+        setLeaderboardData(data);
+        
+        // Load category leaderboards
+        const categories = await leaderboardService.getCategoryLeaderboards();
+        setCategoryLeaderboards(categories);
+        
+        // Load current season
+        const season = await leaderboardService.getCurrentSeason();
+        setCurrentSeason(season);
+        
+        // Load rewards
+        const availableRewards = await leaderboardService.getRewards();
+        setRewards(availableRewards);
+        
+        // Load player data if user is logged in
+        if (user) {
+          const history = await leaderboardService.getPlayerHistory(
+            user.id,
+            selectedGame !== "all" ? selectedGame : undefined
+          );
+          setPlayerHistory(history);
+          
+          const stats = await leaderboardService.getPlayerStats(user.id);
+          setPlayerStats(stats);
+        }
+      } catch (error) {
+        console.error("Error loading leaderboard data:", error);
+      }
+    };
+    
+    loadLeaderboardData();
+  }, [user, selectedGame, selectedCategory, selectedTimeRange]);
+  
+  // Filter leaderboard data based on search query
+  const filteredLeaderboardData = leaderboardData.filter(entry => 
+    entry.playerName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    entry.gameName.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+  
+  // Format score with commas
+  const formatScore = (score: number) => {
+    return score.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  };
+  
+  // Get rank change icon
+  const getRankChangeIcon = (change: number) => {
+    if (change > 0) {
+      return <TrendingUp className="h-4 w-4 text-green-500" />;
+    } else if (change < 0) {
+      return <TrendingUp className="h-4 w-4 text-red-500 transform rotate-180" />;
+    } else {
+      return <Minus className="h-4 w-4 text-gray-400" />;
+    }
+  };
+  
+  // Get reward rarity color
+  const getRewardRarityColor = (rarity: string) => {
+    switch (rarity) {
+      case "common":
+        return "text-gray-400";
+      case "uncommon":
+        return "text-green-500";
+      case "rare":
+        return "text-blue-500";
+      case "epic":
+        return "text-purple-500";
+      case "legendary":
+        return "text-yellow-500";
+      default:
+        return "text-gray-400";
+    }
+  };
+  
   return (
-    <div className="min-h-screen flex flex-col">
-      <Navbar />
-      <main className="flex-1 py-8 px-4 md:px-6 lg:px-8 cyber-bg">
-        <div className="container mx-auto">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold tracking-tight mb-4 flex items-center">
-              <Trophy className="mr-3 h-8 w-8 text-yellow-400" />
-              Global Leaderboard
-            </h1>
-            
-            <Tabs defaultValue="global" className="w-full mb-6">
-              <TabsList className="grid w-full max-w-md grid-cols-3">
-                <TabsTrigger value="global">Global</TabsTrigger>
-                <TabsTrigger value="friends">Friends</TabsTrigger>
-                <TabsTrigger value="you">Your Scores</TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="global" className="space-y-4">
-                {/* Filters and Search */}
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6 mt-4">
-                  <div className="relative">
-                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      type="search"
-                      placeholder="Search players..."
-                      className="pl-8"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                    />
-                  </div>
-                  
-                  <Select value={gameFilter} onValueChange={setGameFilter}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="All Games" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Games</SelectItem>
-                      <SelectItem value="Tetris Classic">Tetris Classic</SelectItem>
-                      <SelectItem value="Snake.io">Snake.io</SelectItem>
-                      <SelectItem value="2048">2048</SelectItem>
-                      <SelectItem value="Pac-Man">Pac-Man</SelectItem>
-                      <SelectItem value="Flappy Bird">Flappy Bird</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  
-                  <Select value={timeRange} onValueChange={setTimeRange}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Time Range" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Time</SelectItem>
-                      <SelectItem value="today">Today</SelectItem>
-                      <SelectItem value="week">This Week</SelectItem>
-                      <SelectItem value="month">This Month</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  
-                  <Button variant="outline" className="w-full md:w-auto" disabled={!currentUser}>
-                    {currentUser ? "Challenge Friends" : "Sign in to Challenge Friends"}
-                  </Button>
-                </div>
-                
-                {/* Leaderboard Table */}
-                <div className="bg-card rounded-lg border shadow overflow-hidden">
+    <div className="container mx-auto py-8 px-4">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+        <div>
+          <h1 className="text-3xl font-bold text-gaming-primary mb-2">Leaderboards</h1>
+          <p className="text-gray-400">
+            Compete with players worldwide and climb the ranks
+          </p>
+        </div>
+        
+        {currentSeason && (
+          <Card className="w-full md:w-auto mt-4 md:mt-0 bg-gaming-card border-gaming-border">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-xl flex items-center">
+                <Trophy className="h-5 w-5 mr-2 text-gaming-accent" />
+                {currentSeason.name}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center text-sm text-gray-400">
+                <Calendar className="h-4 w-4 mr-1" />
+                {new Date(currentSeason.startDate).toLocaleDateString()} - {new Date(currentSeason.endDate).toLocaleDateString()}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+      </div>
+      
+      {/* Filters */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <Input
+            placeholder="Search players or games..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-10 bg-gaming-card border-gaming-border"
+          />
+        </div>
+        
+        <Select value={selectedGame} onValueChange={setSelectedGame}>
+          <SelectTrigger className="bg-gaming-card border-gaming-border">
+            <SelectValue placeholder="Select Game" />
+          </SelectTrigger>
+          <SelectContent>
+            {GAMES.map((game) => (
+              <SelectItem key={game.value} value={game.value}>
+                {game.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        
+        <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+          <SelectTrigger className="bg-gaming-card border-gaming-border">
+            <SelectValue placeholder="Select Category" />
+          </SelectTrigger>
+          <SelectContent>
+            {CATEGORIES.map((category) => (
+              <SelectItem key={category.value} value={category.value}>
+                {category.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        
+        <Select value={selectedTimeRange} onValueChange={setSelectedTimeRange}>
+          <SelectTrigger className="bg-gaming-card border-gaming-border">
+            <SelectValue placeholder="Select Time Range" />
+          </SelectTrigger>
+          <SelectContent>
+            {TIME_RANGES.map((range) => (
+              <SelectItem key={range.value} value={range.value}>
+                {range.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+      
+      {/* Tabs */}
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-8">
+        <TabsList className="grid grid-cols-4 mb-8">
+          <TabsTrigger value="global" className="flex items-center">
+            <Trophy className="h-4 w-4 mr-2" />
+            Global
+          </TabsTrigger>
+          <TabsTrigger value="categories" className="flex items-center">
+            <BarChart3 className="h-4 w-4 mr-2" />
+            Categories
+          </TabsTrigger>
+          <TabsTrigger value="history" className="flex items-center">
+            <History className="h-4 w-4 mr-2" />
+            History
+          </TabsTrigger>
+          <TabsTrigger value="rewards" className="flex items-center">
+            <Award className="h-4 w-4 mr-2" />
+            Rewards
+          </TabsTrigger>
+        </TabsList>
+        
+        {/* Global Leaderboard Tab */}
+        <TabsContent value="global">
+          <Card className="bg-gaming-card border-gaming-border">
+            <CardHeader>
+              <CardTitle>Global Leaderboard</CardTitle>
+              <CardDescription>
+                Top players across all games
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-16">Rank</TableHead>
+                    <TableHead>Player</TableHead>
+                    <TableHead>Game</TableHead>
+                    <TableHead>Category</TableHead>
+                    <TableHead className="text-right">Score</TableHead>
+                    <TableHead className="w-16">Change</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredLeaderboardData.map((entry, index) => (
+                    <TableRow key={entry.id}>
+                      <TableCell className="font-medium">
+                        <div className="flex items-center">
+                          {index < 3 ? (
+                            <Medal className={`h-5 w-5 mr-2 ${
+                              index === 0 ? "text-yellow-500" : 
+                              index === 1 ? "text-gray-400" : 
+                              "text-amber-600"
+                            }`} />
+                          ) : null}
+                          {entry.rank}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center">
+                          <img 
+                            src={entry.playerAvatar} 
+                            alt={entry.playerName} 
+                            className="h-8 w-8 rounded-full mr-2"
+                          />
+                          {entry.playerName}
+                        </div>
+                      </TableCell>
+                      <TableCell>{entry.gameName}</TableCell>
+                      <TableCell>{entry.category}</TableCell>
+                      <TableCell className="text-right">{formatScore(entry.score)}</TableCell>
+                      <TableCell>
+                        <div className="flex items-center justify-center">
+                          {getRankChangeIcon(entry.change)}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        {/* Categories Tab */}
+        <TabsContent value="categories">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {categoryLeaderboards.map((category) => (
+              <Card key={category.category} className="bg-gaming-card border-gaming-border">
+                <CardHeader>
+                  <CardTitle>{category.category}</CardTitle>
+                  <CardDescription>
+                    {category.totalPlayers} players • Avg. Score: {formatScore(category.averageScore)}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead className="w-[80px] text-center">Rank</TableHead>
+                        <TableHead className="w-16">Rank</TableHead>
                         <TableHead>Player</TableHead>
                         <TableHead>Game</TableHead>
                         <TableHead className="text-right">Score</TableHead>
-                        <TableHead className="text-right">Date</TableHead>
-                        <TableHead className="text-right w-[80px]">Change</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {filteredLeaderboard.map((entry) => (
-                        <TableRow 
-                          key={entry.id} 
-                          className={entry.rank <= 3 ? "bg-gaming-primary/5" : ""}
-                        >
-                          <TableCell className="font-medium text-center">
-                            {entry.rank <= 3 ? (
-                              <div className="flex justify-center">
-                                <Medal className={`h-5 w-5 ${
-                                  entry.rank === 1 ? "text-yellow-400" : 
-                                  entry.rank === 2 ? "text-gray-400" : "text-amber-700"
+                      {category.entries.slice(0, 5).map((entry, index) => (
+                        <TableRow key={entry.id}>
+                          <TableCell className="font-medium">
+                            <div className="flex items-center">
+                              {index < 3 ? (
+                                <Medal className={`h-5 w-5 mr-2 ${
+                                  index === 0 ? "text-yellow-500" : 
+                                  index === 1 ? "text-gray-400" : 
+                                  "text-amber-600"
                                 }`} />
-                              </div>
-                            ) : entry.rank}
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex items-center space-x-3">
-                              <Avatar>
-                                <AvatarImage src={entry.player.avatar} alt={entry.player.name} />
-                                <AvatarFallback>{entry.player.name.substring(0, 2)}</AvatarFallback>
-                              </Avatar>
-                              <span className={entry.rank <= 3 ? "font-bold" : ""}>{entry.player.name}</span>
+                              ) : null}
+                              {entry.rank}
                             </div>
                           </TableCell>
                           <TableCell>
-                            <Badge variant="outline" className="bg-background">
-                              {entry.game}
-                            </Badge>
+                            <div className="flex items-center">
+                              <img 
+                                src={entry.playerAvatar} 
+                                alt={entry.playerName} 
+                                className="h-8 w-8 rounded-full mr-2"
+                              />
+                              {entry.playerName}
+                            </div>
                           </TableCell>
-                          <TableCell className="text-right font-mono font-bold">
-                            {entry.score.toLocaleString()}
-                          </TableCell>
-                          <TableCell className="text-right text-muted-foreground">
-                            {entry.date}
-                          </TableCell>
-                          <TableCell className="text-right">
-                            {entry.change !== 0 && (
-                              <Badge 
-                                variant="outline" 
-                                className={`${
-                                  entry.change > 0 
-                                    ? 'text-green-500 bg-green-500/10' 
-                                    : 'text-red-500 bg-red-500/10'
-                                }`}
-                              >
-                                <ArrowUp 
-                                  className={`h-3 w-3 mr-1 ${entry.change < 0 ? 'rotate-180' : ''}`} 
-                                />
-                                {Math.abs(entry.change)}
-                              </Badge>
-                            )}
-                          </TableCell>
+                          <TableCell>{entry.gameName}</TableCell>
+                          <TableCell className="text-right">{formatScore(entry.score)}</TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
                   </Table>
-                </div>
-                
-                {/* User's Position */}
-                {userRanking && (
-                  <div className="mt-8">
-                    <h3 className="text-lg font-semibold mb-3">Your Position</h3>
-                    <div className="bg-card rounded-lg border shadow overflow-hidden">
-                      <Table>
-                        <TableHeader>
-                          <TableRow>
-                            <TableHead className="w-[80px] text-center">Rank</TableHead>
-                            <TableHead>Player</TableHead>
-                            <TableHead>Game</TableHead>
-                            <TableHead className="text-right">Score</TableHead>
-                            <TableHead className="text-right">Date</TableHead>
-                            <TableHead className="text-right w-[80px]">Change</TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          <TableRow className="bg-gaming-primary/10">
-                            <TableCell className="font-medium text-center">{userRanking.rank}</TableCell>
-                            <TableCell>
-                              <div className="flex items-center space-x-3">
-                                <Avatar>
-                                  <AvatarImage src={userRanking.player.avatar} alt={userRanking.player.name} />
-                                  <AvatarFallback>{userRanking.player.name.substring(0, 2)}</AvatarFallback>
-                                </Avatar>
-                                <span className="font-bold">You ({userRanking.player.name})</span>
-                              </div>
-                            </TableCell>
-                            <TableCell>
-                              <Badge variant="outline" className="bg-background">
-                                {userRanking.game}
-                              </Badge>
-                            </TableCell>
-                            <TableCell className="text-right font-mono font-bold">
-                              {userRanking.score.toLocaleString()}
-                            </TableCell>
-                            <TableCell className="text-right text-muted-foreground">
-                              {userRanking.date}
-                            </TableCell>
-                            <TableCell className="text-right">
-                              {userRanking.change !== 0 && (
-                                <Badge 
-                                  variant="outline" 
-                                  className={`${
-                                    userRanking.change > 0 
-                                      ? 'text-green-500 bg-green-500/10' 
-                                      : 'text-red-500 bg-red-500/10'
-                                  }`}
-                                >
-                                  <ArrowUp 
-                                    className={`h-3 w-3 mr-1 ${userRanking.change < 0 ? 'rotate-180' : ''}`} 
-                                  />
-                                  {Math.abs(userRanking.change)}
-                                </Badge>
-                              )}
-                            </TableCell>
-                          </TableRow>
-                        </TableBody>
-                      </Table>
+                </CardContent>
+                <CardFooter>
+                  <Button variant="outline" className="w-full">
+                    View All {category.category} Rankings
+                  </Button>
+                </CardFooter>
+              </Card>
+            ))}
+          </div>
+        </TabsContent>
+        
+        {/* History Tab */}
+        <TabsContent value="history">
+          {playerHistory ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Card className="bg-gaming-card border-gaming-border">
+                <CardHeader>
+                  <CardTitle>Score History</CardTitle>
+                  <CardDescription>
+                    Your performance over time
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-80">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <LineChart
+                        data={playerHistory.scores}
+                        margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                        <XAxis dataKey="date" stroke="#9CA3AF" />
+                        <YAxis stroke="#9CA3AF" />
+                        <Tooltip 
+                          contentStyle={{ 
+                            backgroundColor: "#1F2937", 
+                            border: "1px solid #374151",
+                            borderRadius: "0.375rem"
+                          }}
+                        />
+                        <Legend />
+                        <Line 
+                          type="monotone" 
+                          dataKey="score" 
+                          stroke="#FBBF24" 
+                          activeDot={{ r: 8 }} 
+                        />
+                        <Line 
+                          type="monotone" 
+                          dataKey="rank" 
+                          stroke="#60A5FA" 
+                          activeDot={{ r: 8 }} 
+                        />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card className="bg-gaming-card border-gaming-border">
+                <CardHeader>
+                  <CardTitle>Player Stats</CardTitle>
+                  <CardDescription>
+                    Your gaming achievements
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-gaming-card-dark p-4 rounded-lg">
+                      <div className="text-sm text-gray-400">Best Score</div>
+                      <div className="text-2xl font-bold text-gaming-primary">
+                        {formatScore(playerHistory.bestScore)}
+                      </div>
+                    </div>
+                    <div className="bg-gaming-card-dark p-4 rounded-lg">
+                      <div className="text-sm text-gray-400">Average Score</div>
+                      <div className="text-2xl font-bold text-gaming-primary">
+                        {formatScore(playerHistory.averageScore)}
+                      </div>
+                    </div>
+                    <div className="bg-gaming-card-dark p-4 rounded-lg">
+                      <div className="text-sm text-gray-400">Games Played</div>
+                      <div className="text-2xl font-bold text-gaming-primary">
+                        {playerHistory.totalGames}
+                      </div>
+                    </div>
+                    <div className="bg-gaming-card-dark p-4 rounded-lg">
+                      <div className="text-sm text-gray-400">Improvement</div>
+                      <div className="text-2xl font-bold text-green-500">
+                        +{playerHistory.improvementRate}%
+                      </div>
                     </div>
                   </div>
-                )}
-              </TabsContent>
-              
-              <TabsContent value="friends">
-                <div className="flex flex-col items-center justify-center py-12">
-                  <h3 className="text-xl font-semibold mb-3">Connect with Friends</h3>
-                  <p className="text-muted-foreground mb-6">Sign in and add friends to see how you compare!</p>
-                  {!currentUser && (
-                    <Button asChild>
-                      <Link to="/login">Sign In</Link>
-                    </Button>
-                  )}
-                </div>
-              </TabsContent>
-              
-              <TabsContent value="you">
-                <div className="flex flex-col items-center justify-center py-12">
-                  <h3 className="text-xl font-semibold mb-3">Your Personal Scores</h3>
-                  <p className="text-muted-foreground mb-6">
-                    {currentUser ? "Play games to start tracking your scores!" : "Sign in to track your progress across games"}
+                </CardContent>
+              </Card>
+            </div>
+          ) : (
+            <Card className="bg-gaming-card border-gaming-border">
+              <CardContent className="py-12">
+                <div className="text-center">
+                  <History className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+                  <h3 className="text-xl font-medium mb-2">No History Available</h3>
+                  <p className="text-gray-400 mb-4">
+                    Play some games to see your history and stats
                   </p>
-                  {!currentUser && (
-                    <Button asChild>
-                      <Link to="/login">Sign In</Link>
-                    </Button>
-                  )}
+                  <Button>Browse Games</Button>
                 </div>
-              </TabsContent>
-            </Tabs>
+              </CardContent>
+            </Card>
+          )}
+        </TabsContent>
+        
+        {/* Rewards Tab */}
+        <TabsContent value="rewards">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {rewards.map((reward) => (
+              <Card key={reward.id} className="bg-gaming-card border-gaming-border">
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div className="text-3xl">{reward.icon}</div>
+                    <div className={`text-sm font-medium ${getRewardRarityColor(reward.rarity)}`}>
+                      {reward.rarity.charAt(0).toUpperCase() + reward.rarity.slice(1)}
+                    </div>
+                  </div>
+                  <CardTitle className="mt-2">{reward.title}</CardTitle>
+                  <CardDescription>{reward.description}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="bg-gaming-card-dark p-4 rounded-lg">
+                    <div className="text-sm text-gray-400 mb-2">Requirements</div>
+                    <div className="flex items-center">
+                      {reward.requirements.type === "rank" ? (
+                        <Crown className="h-4 w-4 mr-2 text-gaming-accent" />
+                      ) : (
+                        <Target className="h-4 w-4 mr-2 text-gaming-accent" />
+                      )}
+                      <span>
+                        {reward.requirements.type === "rank" 
+                          ? `Reach rank ${reward.requirements.value}`
+                          : `Score ${formatScore(reward.requirements.value)} points`
+                        }
+                        {reward.requirements.category && ` in ${reward.requirements.category} games`}
+                      </span>
+                    </div>
+                  </div>
+                </CardContent>
+                <CardFooter>
+                  <Button 
+                    variant={reward.unlocked ? "default" : "outline"} 
+                    className="w-full"
+                    disabled={!reward.unlocked}
+                  >
+                    {reward.unlocked ? "Unlocked" : "Locked"}
+                  </Button>
+                </CardFooter>
+              </Card>
+            ))}
           </div>
-        </div>
-      </main>
-      <Footer />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

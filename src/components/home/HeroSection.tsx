@@ -1,12 +1,11 @@
-
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Gamepad, Trophy, User, UserPlus, Zap } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 export function HeroSection() {
-  // Check if user is logged in
-  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-  const user = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")!) : null;
+  // Use the AuthContext instead of localStorage
+  const { user } = useAuth();
 
   return (
     <section className="relative py-16 md:py-24 overflow-hidden">
@@ -20,10 +19,10 @@ export function HeroSection() {
       <div className="container relative z-10 px-4 mx-auto">
         <div className="max-w-3xl mx-auto text-center">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-6">
-            <span className="bg-clip-text text-transparent bg-gaming-gradient animate-gradient-shift bg-[length:200%_auto]">
-              Play Free Games
+            <span className="text-gaming-primary">
+              GameHive 🐝
             </span> <br />
-            Instantly Online
+            Your Ultimate Gaming Destination
           </h1>
           
           <p className="text-xl text-foreground/80 max-w-2xl mx-auto mb-8">
@@ -37,7 +36,7 @@ export function HeroSection() {
                 Play Now
               </Link>
             </Button>
-            {isLoggedIn ? (
+            {user ? (
               <Button size="lg" variant="outline" asChild>
                 <Link to="/leaderboard">
                   <Trophy className="mr-2 h-5 w-5" />
@@ -46,7 +45,7 @@ export function HeroSection() {
               </Button>
             ) : (
               <Button size="lg" variant="outline" asChild>
-                <Link to="/register">
+                <Link to="/signup">
                   <UserPlus className="mr-2 h-5 w-5" />
                   Create Account
                 </Link>
@@ -55,7 +54,7 @@ export function HeroSection() {
           </div>
           
           {/* User Welcome or Stats */}
-          {isLoggedIn && user ? (
+          {user ? (
             <div className="mt-8 p-4 bg-card/30 backdrop-blur-sm rounded-lg border border-gaming-primary/20">
               <div className="flex items-center justify-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-gaming-primary/20 flex items-center justify-center">
@@ -63,7 +62,7 @@ export function HeroSection() {
                 </div>
                 <div className="text-left">
                   <p className="text-sm text-muted-foreground">Welcome back</p>
-                  <p className="font-semibold">{user.name}</p>
+                  <p className="font-semibold">{user.username}</p>
                 </div>
                 <div className="w-px h-10 bg-border mx-3"></div>
                 <Link to="/game/tetris" className="flex items-center hover:text-gaming-primary transition-colors">

@@ -1,12 +1,10 @@
-
 import { useState } from "react";
 import { Footer } from "@/components/layout/Footer";
 import { Navbar } from "@/components/layout/Navbar";
 import { GameCard } from "@/components/games/GameCard";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import GameSearch from "@/components/games/GameSearch";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Flame, Gamepad, PlayCircle, Search, Sparkles, TrendingUp } from "lucide-react";
+import { ArrowRight, Flame, Gamepad, PlayCircle, Sparkles, TrendingUp, Play } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -112,7 +110,8 @@ export default function GamesPage() {
 
   // Filter games based on search query and category
   const filteredGames = GAMES.filter(game => {
-    const matchesSearch = game.title.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch = game.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         game.category.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = categoryFilter === "all" || game.category.toLowerCase() === categoryFilter.toLowerCase();
     return matchesSearch && matchesCategory;
   });
@@ -168,8 +167,15 @@ export default function GamesPage() {
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-white/90">{game.category}</span>
-                      <Button size="sm" variant="secondary" className="bg-gaming-primary text-white hover:bg-gaming-primary/90">
-                        <PlayCircle className="mr-1 h-4 w-4" />
+                      <Button 
+                        className="bg-gaming-primary hover:bg-gaming-primary/90 text-black"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          window.location.href = `/game/${game.id}`;
+                        }}
+                      >
+                        <PlayCircle className="mr-2 h-4 w-4" />
                         Play Now
                       </Button>
                     </div>
@@ -199,45 +205,10 @@ export default function GamesPage() {
                   </TabsTrigger>
                 </TabsList>
                 
-                <div className="flex flex-col md:flex-row gap-4 md:w-auto w-full">
-                  <div className="relative">
-                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      type="search"
-                      placeholder="Search games..."
-                      className="pl-8 w-full"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                    />
-                  </div>
-                  
-                  <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                    <SelectTrigger className="w-full md:w-[180px]">
-                      <SelectValue placeholder="All Categories" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Categories</SelectItem>
-                      <SelectItem value="puzzle">Puzzle</SelectItem>
-                      <SelectItem value="arcade">Arcade</SelectItem>
-                      <SelectItem value="action">Action</SelectItem>
-                      <SelectItem value="adventure">Adventure</SelectItem>
-                      <SelectItem value="shooter">Shooter</SelectItem>
-                      <SelectItem value="card game">Card Game</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  
-                  <Select value={sortBy} onValueChange={setSortBy}>
-                    <SelectTrigger className="w-full md:w-[180px]">
-                      <SelectValue placeholder="Sort by" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="popular">Most Popular</SelectItem>
-                      <SelectItem value="rating">Highest Rated</SelectItem>
-                      <SelectItem value="name-asc">Name: A to Z</SelectItem>
-                      <SelectItem value="name-desc">Name: Z to A</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                <GameSearch 
+                  onSearch={setSearchQuery}
+                  onFilter={setCategoryFilter}
+                />
               </div>
               
               <TabsContent value="all" className="mt-0">
@@ -248,37 +219,10 @@ export default function GamesPage() {
                     ))}
                   </div>
                 ) : (
-                  <div className="text-center py-20">
-                    <h3 className="text-xl font-semibold mb-2">No games found</h3>
-                    <p className="text-muted-foreground">Try adjusting your search or filters</p>
-                    <Button 
-                      variant="outline" 
-                      className="mt-4"
-                      onClick={() => {
-                        setSearchQuery("");
-                        setCategoryFilter("all");
-                      }}
-                    >
-                      Clear Filters
-                    </Button>
+                  <div className="text-center py-12">
+                    <p className="text-muted-foreground">No games found matching your criteria.</p>
                   </div>
                 )}
-              </TabsContent>
-              
-              <TabsContent value="trending" className="mt-0">
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
-                  {GAMES.filter(game => game.rating > 4.5).map((game) => (
-                    <GameCard key={game.id} {...game} />
-                  ))}
-                </div>
-              </TabsContent>
-              
-              <TabsContent value="new" className="mt-0">
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
-                  {GAMES.slice(6, 12).map((game) => (
-                    <GameCard key={game.id} {...game} />
-                  ))}
-                </div>
               </TabsContent>
             </Tabs>
           </div>

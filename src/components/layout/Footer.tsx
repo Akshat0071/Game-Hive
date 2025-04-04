@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { Facebook, Github, Instagram, MessageSquare, Twitter, Youtube } from "lucide-react";
 
@@ -8,8 +7,8 @@ export function Footer() {
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="space-y-4">
-            <div className="text-2xl font-bold bg-clip-text text-transparent bg-gaming-gradient animate-gradient-shift bg-[length:200%_auto]">
-              NEXUS
+            <div className="text-2xl font-bold text-gaming-primary">
+              GameHive 🐝
             </div>
             <p className="text-sm text-muted-foreground max-w-xs">
               The ultimate gaming platform. Connect, play, and compete with gamers from around the world.
@@ -126,7 +125,7 @@ export function Footer() {
         </div>
         
         <div className="mt-12 pt-8 border-t text-center text-sm text-muted-foreground">
-          <p>© 2025 Nexus Gaming. All rights reserved.</p>
+          <p>© 2025 GameHive. All rights reserved.</p>
         </div>
       </div>
     </footer>
